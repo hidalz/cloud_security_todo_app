@@ -9,22 +9,22 @@ class UserBase(BaseModel):
     email: EmailStr
 
 
-class User(UserBase):
-    # Notice that the User, the Pydantic model that will be used when reading a user
-    # (returning it from the API) doesn't include the password.
-    id: int
-    tasks: list[Task] = []
-    projects: list[Project] = []
-    disabled: bool | None = None
-
-    class Config:
-        orm_mode = True
-
-
-class UserInDB(UserBase):
+class UserCreate(UserBase):
     """User creation schema.
 
     For security, the password won't be in the previous Pydantic model.
     This way, it won't be sent from the API when reading a user."""
 
-    hashed_password: str
+    password: str
+
+
+class User(UserBase):
+    # Notice that the User, the Pydantic model that will be used when reading a user
+    # (returning it from the API) doesn't include the password.
+    id: int
+    is_active: bool
+    tasks: list[Task] = []
+    projects: list[Project] = []
+
+    class Config:
+        orm_mode = True

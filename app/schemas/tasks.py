@@ -1,25 +1,25 @@
+# https://docs.pydantic.dev/latest/usage/postponed_annotations/
+from __future__ import annotations
+
+from datetime import datetime
+
 from pydantic import BaseModel
 
-# TODO: Add subtasks
 
-
-class TaskBase(BaseModel):
+class TaskCreateModify(BaseModel):
     title: str
     description: str | None = None
     priority: int = 0
-    # No ORM mode here
+    parent_id: int | None = None
+    project_id: int | None = None
 
 
-class TaskCreate(TaskBase):
-    pass
-
-
-class Task(TaskBase):
+class Task(TaskCreateModify):
     """https://fastapi.tiangolo.com/tutorial/sql-databases/#create-pydantic-models-schemas-for-reading-returning"""
 
     id: int
     owner_id: int
-    project_id: int | None = None
+    subtasks: list[Task] = []
 
     class Config:
         orm_mode = True

@@ -1,8 +1,8 @@
-"""Add projects logic
+"""Update models structure
 
-Revision ID: 6a5feaf64f8d
-Revises: cca8d0085205
-Create Date: 2023-08-14 15:44:52.612546
+Revision ID: 7a6ec25d69e7
+Revises: fd802d3cb10a
+Create Date: 2023-08-20 17:45:30.984353
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '6a5feaf64f8d'
-down_revision: Union[str, None] = 'cca8d0085205'
+revision: str = '7a6ec25d69e7'
+down_revision: Union[str, None] = 'fd802d3cb10a'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

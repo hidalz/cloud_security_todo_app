@@ -2,6 +2,7 @@ from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.db.database import Base
+from app.models.relationships import ProjectCollaborators
 
 
 class User(Base):
@@ -14,4 +15,15 @@ class User(Base):
     disabled = Column(Boolean, default=False)
 
     tasks = relationship("Task", back_populates="owner")
-    projects = relationship("Project", back_populates="owner")
+
+    # User can own multiple projects
+    owned_projects = relationship(
+        "Project", back_populates="owner", foreign_keys="Project.owner_id"
+    )
+
+    # User can collaborate on multiple projects
+    collaborated_projects = relationship(
+        "Project",
+        secondary=ProjectCollaborators,
+        back_populates="collaborators",
+    )

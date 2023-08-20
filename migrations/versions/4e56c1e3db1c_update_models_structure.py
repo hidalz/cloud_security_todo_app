@@ -1,8 +1,8 @@
-"""Add project_id
+"""Update models structure
 
-Revision ID: e174d04bb825
-Revises: e592146ff7cc
-Create Date: 2023-08-14 15:53:41.500951
+Revision ID: 4e56c1e3db1c
+Revises: 7a6ec25d69e7
+Create Date: 2023-08-20 17:58:40.514179
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e174d04bb825'
-down_revision: Union[str, None] = 'e592146ff7cc'
+revision: str = '4e56c1e3db1c'
+down_revision: Union[str, None] = '7a6ec25d69e7'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -108,3 +108,6 @@ venv.bak/
 
 # Project
 postgres-data
+
+# migrations
+migrations/

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -5,17 +7,20 @@ from pydantic import BaseModel
 from app.schemas.tasks import Task
 
 
-# TODO: Add IAM on Project for collaborators
 class ProjectBase(BaseModel):
     name: str
+    description: str
 
 
 class Project(ProjectBase):
     id: int
     owner_id: int
-    is_archived: bool
+    is_active: bool = True
     created_at: datetime
+    updated_at: datetime
+
     tasks: list[Task] = []
+    collaborators_id: list[int] = []
 
     class Config:
         orm_mode = True

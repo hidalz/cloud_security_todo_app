@@ -11,9 +11,27 @@ class Task(Base):
     title = Column(String, index=True)
     description = Column(String, index=True)
     priority = Column(Integer)
-    owner_id = Column(Integer, ForeignKey("users.id"))
-    project_id = Column(Integer, ForeignKey("projects.id"))
 
-    # To review
+    # User tasks
+    owner_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates="tasks")
+
+    # Project tasks
+    project_id = Column(Integer, ForeignKey("projects.id"))
     project = relationship("Project", back_populates="tasks")
+
+    # Subtasks
+    subtasks = relationship("Subtask", back_populates="parent")
+
+
+class Subtask(Base):
+    __tablename__ = "subtasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    description = Column(String, index=True)
+    priority = Column(Integer)
+
+    # Subtasks
+    parent_id = Column(Integer, ForeignKey("tasks.id"))
+    parent = relationship("Task", back_populates="subtasks")

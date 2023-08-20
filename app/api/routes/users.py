@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from starlette.status import *
 
 import app.db.database as db
+import app.models.users as user_model
 import app.schemas.projects as project_schema
 import app.schemas.tasks as task_schema
 import app.schemas.users as user_schema
@@ -52,43 +53,9 @@ def read_user(
     return db_user
 
 
-@router.post(
-    "/{user_id}/tasks/",
-    status_code=HTTP_201_CREATED,
-    response_model=task_schema.Task,
-)
-def create_task_for_user(
-    user_id: int,
-    task: task_schema.TaskCreate,
-    db: Session = Depends(db.get_db),
-):  # TODO: review current_user y como settear el id
-    return task_crud.create_user_task(db=db, task=task, user_id=user_id)
-
-
-@router.post(
-    "/{user_id}/projects/",
-    status_code=HTTP_201_CREATED,
-    response_model=project_schema.Project,
-)
-def create_project_for_user(
-    user_id: int,
-    project: project_schema.ProjectBase,
-    db: Session = Depends(db.get_db),
-    current_user: user_schema.User = Depends(get_current_active_user),
-):
-    return project_crud.create_user_project(db=db, project=project, user_id=user_id)
-
-
 #### USERS ####
 @router.get("/me/", response_model=user_schema.User)
 async def read_users_me(
     current_user: user_schema.User = Depends(get_current_active_user),
 ):
-    return current_user
-
-
-@router.get("/me/tasks/")
-async def read_own_items(
-    current_user: user_schema.User = Depends(get_current_active_user),
-):
-    return [{"item_id": "Foo", "owner": current_user.username}]
+    return current_user  # TODO: Esto devuelve subtasks como tasks, ver como arreglarlo

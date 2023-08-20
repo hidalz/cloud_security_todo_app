@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
+from app import schemas
 from app.schemas.projects import Project
 from app.schemas.tasks import Task
 
@@ -15,7 +16,8 @@ class User(UserBase):
     id: int
     disabled: bool
     tasks: list[Task] = []
-    projects: list[Project] = []
+    owned_projects: list[Project] = []
+    collaborated_projects: list[Project] = []
 
     class Config:
         orm_mode = True

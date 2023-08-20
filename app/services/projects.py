@@ -50,7 +50,7 @@ def create_project(
     db: Session, project: schemas.ProjectBase, user_id: int
 ) -> models.Project:
     db_project = models.Project(
-        **project.dict(),
+        **project.model_dump(),
         owner_id=user_id,
         created_at=datetime.now(),
         updated_at=datetime.now(),

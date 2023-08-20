@@ -10,25 +10,16 @@ class TaskCreateModify(BaseModel):
     title: str
     description: str | None = None
     priority: int = 0
+    parent_id: int | None = None
+    project_id: int | None = None
 
 
-class TaskBase(TaskCreateModify):
-    id: int
-
-
-class Subtask(TaskBase):
-    parent_id: int
-
-    class Config:
-        orm_mode = True
-
-
-class Task(TaskBase):
+class Task(TaskCreateModify):
     """https://fastapi.tiangolo.com/tutorial/sql-databases/#create-pydantic-models-schemas-for-reading-returning"""
 
+    id: int
     owner_id: int
-    project_id: int | None = None
-    subtasks: list[Subtask] = []
+    subtasks: list[Task] = []
 
     class Config:
         orm_mode = True

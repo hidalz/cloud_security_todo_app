@@ -21,17 +21,18 @@ class Task(Base):
     project = relationship("Project", back_populates="tasks")
 
     # Subtasks
-    subtasks = relationship("Subtask", back_populates="parent")
-
-
-class Subtask(Base):
-    __tablename__ = "subtasks"
-
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
-    priority = Column(Integer)
-
-    # Subtasks
     parent_id = Column(Integer, ForeignKey("tasks.id"))
-    parent = relationship("Task", back_populates="subtasks")
+
+    parent = relationship(
+        "Task",
+        back_populates="subtasks",
+        remote_side=[id],
+        single_parent=True,
+        passive_deletes=True,
+    )
+    subtasks = relationship(
+        "Task",
+        back_populates="parent",
+        remote_side=[parent_id],
+        cascade="all, delete-orphan",
+    )

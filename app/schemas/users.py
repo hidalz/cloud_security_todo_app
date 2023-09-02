@@ -18,6 +18,7 @@ class User(UserBase):
     tasks: list[Task] = []
     owned_projects: list[Project] = []
     collaborated_projects: list[Project] = []
+    is_superuser: bool = False
 
     class Config:
         orm_mode = True
@@ -27,3 +28,14 @@ class UserInDB(UserBase):
     # Notice that the UserInDB, the Pydantic model that will be used when writing a user
     # (creating it in the database) includes the password.
     hashed_password: str
+
+    class Config:
+        orm_mode = True
+
+
+class UserUpdatePassword(BaseModel):
+    current_password: str
+    new_password: str
+
+    class Config:
+        orm_mode = True

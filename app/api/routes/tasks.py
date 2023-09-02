@@ -4,6 +4,7 @@ from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 import app.db.database as db
 import app.schemas.users as user_schema
+import app.services.projects as project_crud
 import app.services.tasks as crud
 from app.models.tasks import Task as task_model
 from app.schemas.tasks import Task, TaskCreateModify
@@ -33,6 +34,25 @@ def create_own_task(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ):
+    parent_task = task_crud.get_task(
+        db, owner_id=current_user.id, task_id=task.parent_id
+    )
+
+    if not parent_task:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail="Parent task not found",
+        )
+
+    project = project_crud.get_project(db, project_id=task.project_id)
+    # TODO: Lidiar con lo mismo pero con proyecto pero evitar coupling! Lidiar con los nones y el pylance
+    # TODO: Sigue siendo el crud para interactuar con la DB, no el routing ... pero bueno a ver luego en deployment y tal, que lio
+    if not project:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail="Project not found",
+        )
+
     return task_crud.create_task(db=db, task=task, user_id=current_user.id)
 
 
@@ -61,7 +81,14 @@ def delete_task(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ):
-    task_crud.delete_task(
-        db, owner_id=current_user.id, task_id=task_id
-    )  # Review current user id needed or not. OVerkill. TODO
+    db_task = task_crud.get_task(db, owner_id=current_user.id, task_id=task_id)
+
+    if not db_task:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail="Task not found",
+        )
+
+    task_crud.delete_task(db, owner_id=current_user.id, task_id=task_id)
+
     return {"message": f"Task {task_id} deleted"}

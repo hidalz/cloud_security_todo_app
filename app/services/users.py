@@ -36,3 +36,57 @@ def get_user_by_email(db: Session, email: str) -> models.User:
 
 def get_user_by_username(db: Session, username: str) -> models.User:
     return db.query(models.User).filter(models.User.username == username).first()
+
+
+def delete_user_by_id(db: Session, user_id: int) -> None:
+    db_user = get_user_by_id(
+        db, user_id=user_id
+    )  # TODO: Check if user is admin or self in path
+    if db_user is None:
+        return None
+
+    db.delete(db_user)
+    db.commit()
+
+
+# TODO: See possible performance increase
+def update_account_details(
+    db: Session, user_data_update: schemas.UserBase, current_user_id: int
+) -> models.User | None:
+    db_user = get_user_by_id(db, user_id=current_user_id)
+
+    if db_user is None:
+        return None
+
+    if user_data_update.username:
+        db_user.username = user_data_update.username  # type: ignore
+    if user_data_update.email:
+        db_user.email = user_data_update.email  # type: ignore
+
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user
+
+
+def update_account_password(
+    db: Session, password_schema: schemas.UserUpdatePassword, current_user_id: int
+) -> models.User | None:
+    db_user = get_user_by_id(db, user_id=current_user_id)
+
+    if db_user is None:
+        return None
+
+    # The hashed password in the db and the input one must match
+    if not auth.verify_password(
+        password_schema.current_password, db_user.hashed_password
+    ):
+        return None
+
+    if password_schema.new_password:  # TODO: add more verifications to the password
+        db_user.hashed_password = auth.get_password_hash(password_schema.new_password)  # type: ignore
+    # Comprobar si misma pw, etc. Mirar si fastapi tiene algo!! Automatic logout #TODOs
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user

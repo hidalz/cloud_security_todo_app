@@ -5,7 +5,7 @@ the input data is performed by the validators in the input_validators module."""
 
 from sqlalchemy.orm import Session
 
-import auth_service.auth_services as auth
+import auth_service.auth_crud as auth
 import users_service.users_models as models
 import users_service.users_schemas as schemas
 

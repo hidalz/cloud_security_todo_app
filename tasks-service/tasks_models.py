@@ -9,6 +9,8 @@ from app.db.database import Base
 
 
 class Task(Base):
+    """Task model."""
+
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, index=True)

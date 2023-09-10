@@ -9,13 +9,19 @@ from app.schemas.tasks import Task
 
 
 class UserBase(BaseModel):
+    """User base schema. Used to validate the input data when creating a user."""
+
     username: str
     email: EmailStr
 
 
 class User(UserBase):
-    # Notice that the User, the Pydantic model that will be used when reading a user
-    # (returning it from the API) doesn't include the password.
+    """User schema. Used to return the user data.
+
+    Notice that the User, the Pydantic model that will be used when reading a user
+    (returning it from the API) doesn't include the password.
+    """
+
     id: int
     disabled: bool
     tasks: list[Task] = []
@@ -28,8 +34,12 @@ class User(UserBase):
 
 
 class UserInDB(UserBase):
-    # Notice that the UserInDB, the Pydantic model that will be used when writing a user
-    # (creating it in the database) includes the password.
+    """User in database schema. Used to return the user data from the database.
+
+    Notice that the UserInDB, the Pydantic model that will be used when reading a user
+    (returning it from the database) includes the hashed password.
+    """
+
     hashed_password: str
 
     class Config:
@@ -37,6 +47,8 @@ class UserInDB(UserBase):
 
 
 class UserUpdatePassword(BaseModel):
+    """User update password schema. Used to validate the input data when updating a user password."""
+
     current_password: str
     new_password: str
 

@@ -78,12 +78,31 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
 
 def get_user(username: str, db: Session = Depends(db.get_db)):
+    """Get user by username.
+
+    Args:
+        username (str): Username.
+        db (Session): DB dependency injection. Defaults to Depends(db.get_db).
+
+    Returns:
+        User: User SQLAlchemy model.
+    """
     user = db.query(User).filter(User.username == username).first()
     if user:
         return user
 
 
 def authenticate_user(username: str, password: str, db: Session = Depends(db.get_db)):
+    """Authenticate user.
+
+    Args:
+        username (str): Username.
+        password (str): Password.
+        db (Session): DB dependency injection. Defaults to Depends(db.get_db).
+
+    Returns:
+        User: User SQLAlchemy model.
+    """
     user = get_user(username, db)
 
     if not user:
@@ -97,6 +116,18 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(db.get_db),
 ):
+    """Get current user.
+
+    Args:
+        token (str): JWT token. Defaults to Depends(oauth2_scheme).
+        db (Session): DB dependency injection. Defaults to Depends(db.get_db).
+
+    Raises:
+        HTTPException: If credentials are invalid.
+
+    Returns:
+        User: User SQLAlchemy model.
+    """
     credentials_exception = HTTPException(
         status_code=HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -120,6 +151,17 @@ async def get_current_user(
 
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
+    """Get current active user.
+
+    Args:
+        current_user (User): Current user.
+
+    Raises:
+        HTTPException: If user is inactive.
+
+    Returns:
+        User: User SQLAlchemy model.
+    """
     if current_user.disabled:  # type: ignore
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

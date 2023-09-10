@@ -24,7 +24,19 @@ router = APIRouter(tags=["Users"], prefix="/users")
 
 
 @router.post("/", status_code=HTTP_201_CREATED, response_model=user_schema.User)
-def create_user(user: user_schema.UserInDB, db: Session = Depends(db.get_db)):
+def create_user(user: user_schema.UserInDB, db: Session = Depends(db.get_db)) -> user_schema.User:
+    """Create user.
+
+    Args:
+        user (user_schema.UserInDB): User data.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+
+    Returns:
+        user_schema.User: User data.
+
+    Raises:
+        HTTPException: If the username or email is already registered.
+    """
     validate_user(
         db=db,
         username=user.username.lower(),
@@ -39,7 +51,15 @@ def create_user(user: user_schema.UserInDB, db: Session = Depends(db.get_db)):
 @router.get("/me", response_model=user_schema.User)
 async def read_my_user(
     current_user: user_schema.User = Depends(get_current_active_user),
-):
+) -> user_schema.User:
+    """Get current user.
+
+    Args:
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        user_schema.User: User data.
+    """
     return current_user
 
 
@@ -47,7 +67,17 @@ async def read_my_user(
 def delete_my_account(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
-):
+) -> None:
+    """Delete current user.
+
+    Args:
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Raises:
+        HTTPException: If the user does not exist.
+    """
+
     validate_user(db=db, user_id=current_user.id)
 
     user_crud.delete_user_by_id(db, user_id=current_user.id)
@@ -58,7 +88,20 @@ def update_account_details(
     user: user_schema.UserBase,
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
-):
+) -> user_schema.UserBase:
+    """Update current user details.
+
+    Args:
+        user (user_schema.UserBase): User data.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        user_schema.UserBase: User data.
+
+    Raises:
+        HTTPException: If the username or email is already registered.
+    """
     validate_user(
         db=db,
         username=user.username,
@@ -76,7 +119,21 @@ def update_account_password(
     password_schema: user_schema.UserUpdatePassword,
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
-):
+) -> dict:
+    """Update current user password.
+
+    Args:
+        password_schema (user_schema.UserUpdatePassword): User data.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        dict: Message.
+
+    Raises:
+        HTTPException: If the user does not exist.
+        HTTPException: If the password is incorrect.
+    """
     validate_user(db=db, password=password_schema.new_password)
 
     user_crud.update_account_password(

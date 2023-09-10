@@ -27,6 +27,17 @@ def get_own_tasks(
     db: Session = Depends(db.get_db),
     current_user: task_model = Depends(get_current_active_user),
 ) -> list[task_model]:
+    """Get own tasks.
+
+    Args:
+        skip (int, optional): Number of tasks to skip. Defaults to 0.
+        limit (int, optional): Number of tasks to return. Defaults to 100.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (task_model, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        list[Task]: List of SQL Alchemy Task models.
+    """
     return crud.get_all_own_tasks(db, owner_id=current_user.id, skip=skip, limit=limit)  # type: ignore
 
 
@@ -40,6 +51,16 @@ def create_own_task(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ):
+    """Create task.
+
+    Args:
+        task (TaskCreateModify): Task data.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        Task: SQL Alchemy Task model.
+    """
     validate_task(
         db=db,
         project_id=task.project_id,
@@ -51,7 +72,6 @@ def create_own_task(
     return task_crud.create_task(db=db, task=task, user_id=current_user.id)
 
 
-# Update task
 @router.put("/{task_id}", status_code=HTTP_200_OK, response_model=Task)
 def update_task(
     task_id: int,
@@ -59,6 +79,21 @@ def update_task(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ) -> task_model:
+    """Update task.
+
+    Args:
+        task_id (int): Task ID.
+        task (TaskCreateModify): Task data.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        task_model: SQL Alchemy Task model.
+
+    Raises:
+        HTTPException: If the task does not exist.
+        HTTPException: If the user is not the owner of the task.
+    """
     validate_task(
         db=db,
         task_priority=task.priority,
@@ -76,6 +111,17 @@ def delete_task(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ):
+    """Delete task.
+
+    Args:
+        task_id (int): Task ID.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Raises:
+        HTTPException: If the task does not exist.
+        HTTPException: If the user is not the owner of the task.
+    """
     validate_task(
         db=db,
         task_id=task_id,

@@ -1,6 +1,8 @@
 """Test utilities. This module contains common functions and variables used in the tests."""
 
 from faker import Faker
+from fastapi.testclient import TestClient
+from requests import Response
 
 from app.schemas.users import UserInDB
 
@@ -66,7 +68,7 @@ def mock_test_data(
 
 
 def perform_assertions(
-    response,
+    response: Response,
     http_method: str,
     mock_task: dict | None = None,
     mock_projects: list | None = None,
@@ -74,7 +76,7 @@ def perform_assertions(
     owner_id: int | None = None,
     parent_id: int | None = None,
     project_id: int | None = None,
-):
+) -> None:
     """Perform task assertions.
 
     It asserts the response against the data inputted. It checks task content, relationships and
@@ -119,7 +121,15 @@ def perform_assertions(
         assert response.json()["project_id"] == project_id
 
 
-def get_auth_token_second_user(client) -> dict:
+def get_auth_token_second_user(client: TestClient) -> dict:
+    """Get auth token for second user.
+
+    Args:
+        client (TestClient): Test client.
+
+    Returns:
+        dict: Auth token.
+    """
     # Login with the second user (already in DB from the fixtures)
     response = client.post(
         f"{AUTH_URL}/token",

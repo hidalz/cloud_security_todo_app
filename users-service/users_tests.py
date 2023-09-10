@@ -1,9 +1,16 @@
 """Tests for the users service."""
 
-from tests.utils import USERS, USERS_URL, mock_test_data
+from fastapi.testclient import TestClient
+
+from app.tests.utils import USERS, USERS_URL, mock_test_data
 
 
-def test_create_user(client):
+def test_create_user(client: TestClient):
+    """Nominal test for creating a user.
+
+    Args:
+        client (TestClient): Test client
+    """
     response = client.post(
         USERS_URL,
         json=mock_test_data("user"),
@@ -12,7 +19,12 @@ def test_create_user(client):
     assert response.status_code == 201
 
 
-def test_create_user_with_existing_email(client):
+def test_create_user_with_existing_email(client: TestClient):
+    """Test for creating a user with an existing email.
+
+    Args:
+        client (TestClient): Test client
+    """
     mock_user = mock_test_data("user")
 
     client.post(
@@ -32,7 +44,12 @@ def test_create_user_with_existing_email(client):
     assert response.json() == {"detail": "Email already registered"}
 
 
-def test_create_user_with_existing_username(client):
+def test_create_user_with_existing_username(client: TestClient):
+    """Test for creating a user with an existing username.
+
+    Args:
+        client (TestClient): Test client
+    """
     mock_user = mock_test_data("user")
 
     client.post(
@@ -53,7 +70,13 @@ def test_create_user_with_existing_username(client):
     assert response.json() == {"detail": "Username already registered"}
 
 
-def test_read_my_user(client, auth_token):
+def test_read_my_user(client: TestClient, auth_token: dict) -> None:
+    """Nominal test for getting the current user.
+
+    Args:
+        client (TestClient): Test client
+        auth_token (fixture): JWT token for authentication
+    """
     mock_user = USERS["current_user_create"]
 
     response = client.get(
@@ -66,7 +89,13 @@ def test_read_my_user(client, auth_token):
     assert response.json()["email"] == mock_user.email
 
 
-def test_update_account_password(client, auth_token):
+def test_update_account_password(client: TestClient, auth_token: dict) -> None:
+    """Nominal test for updating the current user's password.
+
+    Args:
+        client (TestClient): Test client
+        auth_token (fixture): JWT token for authentication
+    """
     mock_user = USERS["current_user_create"]
 
     response = client.patch(
@@ -93,7 +122,13 @@ def test_update_account_password(client, auth_token):
     assert response.status_code == 200
 
 
-def test_update_account_password_short_password(client, auth_token):
+def test_update_account_password_short_password(client: TestClient, auth_token: dict) -> None:
+    """Test for updating the current user's password with a password that is too short.
+
+    Args:
+        client (TestClient): Test client
+        auth_token (fixture): JWT token for authentication
+    """
     mock_user = USERS["current_user_create"]
 
     response = client.patch(
@@ -109,7 +144,13 @@ def test_update_account_password_short_password(client, auth_token):
     assert response.json() == {"detail": "Password must be at least 8 characters long"}
 
 
-def test_update_account_password_no_regex_match(client, auth_token):
+def test_update_account_password_no_regex_match(client: TestClient, auth_token: dict) -> None:
+    """Test for updating the current user's password with a password that does not match the regex.
+
+    Args:
+        client (TestClient): Test client
+        auth_token (fixture): JWT token for authentication
+    """
     mock_user = USERS["current_user_create"]
 
     response = client.patch(
@@ -127,7 +168,13 @@ def test_update_account_password_no_regex_match(client, auth_token):
     }
 
 
-def test_update_account_details(client, auth_token):
+def test_update_account_details(client: TestClient, auth_token: dict) -> None:
+    """Nominal test for updating the current user's details.
+
+    Args:
+        client (TestClient): Test client
+        auth_token (fixture): JWT token for authentication
+    """
     mock_user = USERS["current_user_create"]
 
     new_username = "newusername"
@@ -158,7 +205,13 @@ def test_update_account_details(client, auth_token):
     assert response.status_code == 200
 
 
-def test_delete_my_account(client, auth_token):
+def test_delete_my_account(client: TestClient, auth_token: dict) -> None:
+    """Nominal test for deleting the current user.
+
+    Args:
+        client (TestClient): Test client
+        auth_token (fixture): JWT token for authentication
+    """
     response = client.delete(
         f"{USERS_URL}/me",
         headers=auth_token,

@@ -9,6 +9,8 @@ from pydantic import BaseModel
 
 
 class TaskCreateModify(BaseModel):
+    """Task base schema. Used to validate the input data when creating or updating a task."""
+
     title: str
     description: str | None = None
     priority: int = 0
@@ -17,7 +19,10 @@ class TaskCreateModify(BaseModel):
 
 
 class Task(TaskCreateModify):
-    """https://fastapi.tiangolo.com/tutorial/sql-databases/#create-pydantic-models-schemas-for-reading-returning"""
+    """Task schema. Used to return the task data.
+
+    https://fastapi.tiangolo.com/tutorial/sql-databases/#create-pydantic-models-schemas-for-reading-returning
+    """
 
     id: int
     owner_id: int

@@ -26,6 +26,17 @@ def get_owned_and_collaborated_projects(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ) -> list[project_model]:
+    """Get owned and collaborated projects.
+
+    Args:
+        skip (int, optional): Number of projects to skip. Defaults to 0.
+        limit (int, optional): Number of projects to return. Defaults to 100.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        list[Project]: List of SQL Alchemy Project models.
+    """
     return project_crud.get_owned_and_collaborated_projects(
         db, user_id=current_user.id, skip=skip, limit=limit
     )
@@ -37,9 +48,20 @@ def create_project(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ) -> project_model:
-    # check_valid_project_name(db=db, project_name=project.name, user_id=current_user.id)
-    validate_project(db=db, project_name=project.name, user_id=current_user.id)
+    """Create project.
 
+    Args:
+        project (project_schema.ProjectBase): Project data.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        project_model: SQL Alchemy Project model.
+
+    Raises:
+        HTTPException: If the project name already exists.
+    """
+    validate_project(db=db, project_name=project.name, user_id=current_user.id)
     return project_crud.create_project(db, project=project, user_id=current_user.id)
 
 
@@ -49,7 +71,17 @@ def delete_project(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ) -> None:
-    # check_valid_project_id(db=db, project_id=project_id, user_id=current_user.id)
+    """Delete project.
+
+    Args:
+        project_id (int): Project ID.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Raises:
+        HTTPException: If the project does not exist.
+        HTTPException: If the user is not the owner of the project.
+    """
     validate_project(db=db, project_id=project_id, user_id=current_user.id)
     return project_crud.delete_project(db, project_id=project_id)
 
@@ -61,6 +93,21 @@ def update_project(
     db: Session = Depends(db.get_db),
     current_user: user_schema.User = Depends(get_current_active_user),
 ) -> project_model:
+    """Update project.
+
+    Args:
+        project_id (int): Project ID.
+        project (project_schema.ProjectBase): Project data.
+        db (Session, optional): Database session. Defaults to Depends(db.get_db).
+        current_user (user_schema.User, optional): Current user. Defaults to Depends(get_current_active_user).
+
+    Returns:
+        project_model: SQL Alchemy Project model.
+
+    Raises:
+        HTTPException: If the project does not exist.
+        HTTPException: If the user is not the owner of the project.
+    """
     validate_project(db=db, project_id=project_id, user_id=current_user.id)
 
     return project_crud.update_project_information(db, project=project, project_id=project_id)  # type: ignore

@@ -10,6 +10,8 @@ from app.models.relationships import ProjectCollaborators
 
 
 class Project(Base):
+    """Project model."""
+
     __tablename__ = "projects"
 
     id = Column(Integer, primary_key=True, index=True)

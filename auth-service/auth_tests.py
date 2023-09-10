@@ -1,6 +1,7 @@
 """Tests for the authentication service."""
 
 import pytest
+from fastapi.testclient import TestClient
 
 from app.tests.utils import (
     AUTH_URL,
@@ -11,9 +12,17 @@ from app.tests.utils import (
     mock_test_data,
 )
 
+PERMISSIONS_ERROR = {"detail": "Not enough permissions"}
 
-# Authentication
-def test_login_for_auth_token(client):
+
+# AUTHN
+def test_login_for_auth_token(client: TestClient) -> None:
+    """Test for login for auth token.
+
+    Args:
+        client (TestClient): Test client.
+    """
+
     mock_user = USERS["current_user_create"]
 
     response = client.post(
@@ -48,7 +57,16 @@ def test_login_for_auth_token(client):
         ("wrongusername", "wrongpassword"),  # Both wrong
     ],
 )
-def test_login_for_auth_token_wrong_credentials(client, username, password):
+def test_login_for_auth_token_wrong_credentials(
+    client: TestClient, username: str, password: str
+) -> None:
+    """Test for login for auth token with wrong credentials.
+
+    Args:
+        client (TestClient): Test client.
+        username (str): Username.
+        password (str): Password.
+    """
     response = client.post(
         f"{AUTH_URL}/token",
         data={
@@ -61,10 +79,14 @@ def test_login_for_auth_token_wrong_credentials(client, username, password):
     assert response.json() == {"detail": "Incorrect username or password"}
 
 
-# Authorization
+### AUTHZ ###
+def test_update_project_non_authorized(client: TestClient, auth_token: dict) -> None:
+    """Test for update project non authorized.
 
-
-def test_update_project_non_authorized(client, auth_token):
+    Args:
+        client (TestClient): Test client.
+        auth_token (dict): Auth token.
+    """
     # Get project data
     project_data = mock_test_data("project")
 
@@ -79,10 +101,16 @@ def test_update_project_non_authorized(client, auth_token):
     )
 
     assert response.status_code == 403, f"Response: {response.status_code} -> {response.text}"
-    assert response.json() == {"detail": "Not enough permissions"}, response.json()
+    assert response.json() == {"detail": PERMISSIONS_ERROR}, response.json()
 
 
-def test_delete_project_non_authorized(client, auth_token):
+def test_delete_project_non_authorized(client: TestClient, auth_token: dict) -> None:
+    """Test for delete project non authorized.
+
+    Args:
+        client (TestClient): Test client.
+        auth_token (dict): Auth token.
+    """
     # Get project data
     project_data = mock_test_data("project")
 
@@ -96,10 +124,16 @@ def test_delete_project_non_authorized(client, auth_token):
     )
 
     assert response.status_code == 403, f"Response: {response.status_code} -> {response.text}"
-    assert response.json() == {"detail": "Not enough permissions"}, response.json()
+    assert response.json() == {"detail": PERMISSIONS_ERROR}, response.json()
 
 
-def test_delete_task_non_authorized(client, auth_token):
+def test_delete_task_non_authorized(client: TestClient, auth_token: dict) -> None:
+    """Test for delete task non authorized.
+
+    Args:
+        client (TestClient): Test client.
+        auth_token (dict): Auth token.
+    """
     # Get task data
     task_data = mock_test_data("task")
 
@@ -113,10 +147,16 @@ def test_delete_task_non_authorized(client, auth_token):
     )
 
     assert response.status_code == 403, f"Response: {response.status_code} -> {response.text}"
-    assert response.json() == {"detail": "Not enough permissions"}, response.json()
+    assert response.json() == {"detail": PERMISSIONS_ERROR}, response.json()
 
 
-def test_update_task_non_authorized(client, auth_token):
+def test_update_task_non_authorized(client: TestClient, auth_token: dict) -> None:
+    """Test for update task non authorized.
+
+    Args:
+        client (TestClient): Test client.
+        auth_token (dict): Auth token.
+    """
     # Get task data
     task_data = mock_test_data("task")
 
@@ -130,31 +170,9 @@ def test_update_task_non_authorized(client, auth_token):
     )
 
     assert response.status_code == 403, f"Response: {response.status_code} -> {response.text}"
-    assert response.json() == {"detail": "Not enough permissions"}, response.json()
+    assert response.json() == {"detail": PERMISSIONS_ERROR}, response.json()
 
 
-# This is impossible as is, by the method, and by OAuth protection
-# def test_update_my_password_non_authorized(client, auth_token):
-#     # Try to update the password of the current user with the second user
-#     response = client.patch(
-#         url=f"{USERS_URL}/me/password",
-#         json={
-#             "current_password": USERS["current_user_create"].hashed_password,
-#             "new_password": "new_pass",
-#         },
-#         headers=get_auth_token_second_user(client),
-#     )
-
-#     assert response.status_code == 403, f"Response: {response.status_code} -> {response.text}"
-#     assert response.json() == {"detail": "Not enough permissions"}, response.json()
-
-# def test_update_my_account_non_authorized(client, auth_token):
-#     # Try to update the task with the second user
-#     response = client.put(
-#         url=f"{USERS_URL}/me/details",
-#         json={"username": "new_username1", "email": "new_email@example.com"},
-#         headers=get_auth_token_second_user(client),
-#     )
-
-#     assert response.status_code == 403, f"Response: {response.status_code} -> {response.text}"
-#     assert response.json() == {"detail": "Not enough permissions"}, response.json()
+# For users, it is not possible to update or delete other users, so there is no need to test it, that
+# is due to the fact that the user ID is taken from the JWT token, and the user can only update or
+# delete itself.

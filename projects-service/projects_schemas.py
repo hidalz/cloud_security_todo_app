@@ -12,11 +12,15 @@ from app.schemas.tasks import Task
 
 
 class ProjectBase(BaseModel):
+    """Project base schema. Used to validate the input data when creating a project."""
+
     name: str
     description: str
 
 
 class Project(ProjectBase):
+    """Project schema. Used to return the project data."""
+
     id: int
     owner_id: int
     is_active: bool = True

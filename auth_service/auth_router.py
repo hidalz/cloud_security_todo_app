@@ -10,12 +10,12 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 import common_components.database.db as db
-from auth_service.auth_schemas import Token
-from auth_service.auth_services import (
+from auth_service.auth_crud import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     authenticate_user,
     create_access_token,
 )
+from auth_service.auth_schemas import Token
 
 router = APIRouter(tags=["Auth"], prefix="/auth")
 

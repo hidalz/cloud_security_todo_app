@@ -15,10 +15,10 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
 import common_components.database.db as db
+import users_service.users_crud as user_crud
 import users_service.users_schemas as user_schema
-import users_service.users_services as user_crud
-from auth_service.auth_services import get_current_active_user
-from common_components.utils.input_validators import validate_user
+from auth_service.auth_crud import get_current_active_user
+from common_components.input_validators import validate_user
 
 router = APIRouter(tags=["Users"], prefix="/users")
 

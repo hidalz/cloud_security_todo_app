@@ -3,11 +3,10 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
-from app import settings
-from app.db.database import Base, get_db
-from app.main import app
-from app.services.users import create_user
-from app.tests.utils import USERS
+from api_gateway_service.api_gateway import app
+from common_components.database.db import Base, get_db, settings
+from tests.test_utils import USERS
+from users_service.users_crud import create_user
 
 ### DB ###
 

@@ -9,11 +9,11 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 import common_components.database.db as db
-import tasks_service.tasks_services as crud
+import tasks_service.tasks_crud as crud
 import users_service.users_schemas as user_schema
-from auth_service.auth_services import get_current_active_user
-from common_components.utils.input_validators import validate_task
-from tasks_service import tasks_services as task_crud
+from auth_service.auth_crud import get_current_active_user
+from common_components.input_validators import validate_task
+from tasks_service import tasks_crud as task_crud
 from tasks_service.tasks_models import Task as task_model
 from tasks_service.tasks_schemas import Task, TaskCreateModify
 

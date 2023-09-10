@@ -9,11 +9,11 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
 import common_components.database.db as db
+import projects_service.projects_crud as project_crud
 import projects_service.projects_schemas as project_schema
-import projects_service.projects_services as project_crud
 import users_service.users_schemas as user_schema
-from auth_service.auth_services import get_current_active_user
-from common_components.utils.input_validators import validate_project
+from auth_service.auth_crud import get_current_active_user
+from common_components.input_validators import validate_project
 from projects_service.projects_models import Project as project_model
 
 router = APIRouter(tags=["Projects"], prefix="/projects")

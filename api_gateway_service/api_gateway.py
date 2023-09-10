@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from common_components.application.api_router import api_router
+from api_gateway_service.api_router import api_router
 from common_components.database import settings
 
 # Provide a list of origins that should be permitted to make cross-origin requests (CORS).

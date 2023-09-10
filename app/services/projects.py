@@ -5,16 +5,13 @@ from sqlalchemy.orm import Session
 import app.models.projects as models
 import app.schemas.projects as schemas
 from app.models.relationships import ProjectCollaborators
-from app.services import validators
 
 
 def get_project(db: Session, project_id: int) -> models.Project:
-    validators.check_valid_project_id(db=db, project_id=project_id)
     return db.query(models.Project).filter(models.Project.id == project_id).first()
 
 
 def get_project_by_name(db: Session, name: str, user_id: int) -> models.Project:
-    validators.check_valid_project_name(db=db, project_name=name, user_id=user_id)
     return db.query(models.Project).filter(models.Project.name == name).first()
 
 
@@ -52,10 +49,6 @@ def get_owned_and_collaborated_projects(
 def create_project(
     db: Session, project: schemas.ProjectBase, user_id: int
 ) -> models.Project:
-    validators.check_valid_project_name(
-        db=db, project_name=project.name, user_id=user_id
-    )
-
     db_project = models.Project(
         **project.model_dump(),
         owner_id=user_id,
@@ -95,14 +88,9 @@ def update_project_information(
 def add_collaborator(db: Session, project_id: int, user_id: int):
     db_project = get_project(db=db, project_id=project_id)
 
-    validators.check_valid_project_collaborator(
-        db=db, project_id=project_id, user_id=user_id
-    )
+    # validators.check_valid_project_collaborator(db=db, project_id=project_id, user_id=user_id)
 
-    db_project.collaborators.append(
-        user_id
-    )  # TODO: Review si esto funcionaria. Testear
-
+    db_project.collaborators.append(user_id)
     db.commit()
     db.refresh(db_project)
 

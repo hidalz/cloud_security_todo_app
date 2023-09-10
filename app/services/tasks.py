@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 
 import app.models.tasks as models
 import app.schemas.tasks as schemas
-from app.services.validators import validate_task
 
 
 def get_all_own_tasks(
@@ -31,7 +30,6 @@ def get_task(db: Session, owner_id: int, task_id: int) -> models.Task:
     If the task is a subtask, it will be retrieved as well. All the nested subtasks will be
     retrieved.
     """
-    validate_task(db=db, task_id=task_id)
 
     return (
         db.query(models.Task)
@@ -46,13 +44,6 @@ def create_task(
     task: schemas.TaskCreateModify,
     user_id: int,
 ) -> models.Task:
-    validate_task(
-        db=db,
-        project_id=task.project_id,
-        task_parent_id=task.parent_id,
-        task_priority=task.priority,
-    )
-
     db_task = models.Task(
         **task.model_dump(),
         owner_id=user_id,
@@ -66,11 +57,9 @@ def create_task(
 
 
 def update_task(
-    db: Session, owner_id: int, task: schemas.TaskCreateModify
+    db: Session, owner_id: int, task: schemas.TaskCreateModify, task_id: int
 ) -> models.Task:
-    validate_task(db=db, task_priority=task.priority)  # type: ignore
-
-    db_task = get_task(db, owner_id=owner_id, task_id=task.id)  # type: ignore
+    db_task = get_task(db, owner_id=owner_id, task_id=task_id)  # type: ignore
 
     db_task.title = task.title  # type: ignore
     db_task.description = task.description  # type: ignore

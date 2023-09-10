@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 import app.models.users as models
 import app.schemas.users as schemas
 import app.services.auth as auth
-
-# TODO: Add correct permissions and add some methods only for admin accounts -> IAM
+from app.services.validators import validate_user
 
 
 def create_user(db: Session, user: schemas.UserInDB) -> models.User:
@@ -39,9 +38,7 @@ def get_user_by_username(db: Session, username: str) -> models.User:
 
 
 def delete_user_by_id(db: Session, user_id: int) -> None:
-    db_user = get_user_by_id(
-        db, user_id=user_id
-    )  # TODO: Check if user is admin or self in path
+    db_user = get_user_by_id(db, user_id=user_id)
     if db_user is None:
         return None
 
@@ -49,19 +46,14 @@ def delete_user_by_id(db: Session, user_id: int) -> None:
     db.commit()
 
 
-# TODO: See possible performance increase
 def update_account_details(
     db: Session, user_data_update: schemas.UserBase, current_user_id: int
 ) -> models.User | None:
     db_user = get_user_by_id(db, user_id=current_user_id)
 
-    if db_user is None:
-        return None
-
-    if user_data_update.username:
-        db_user.username = user_data_update.username  # type: ignore
-    if user_data_update.email:
-        db_user.email = user_data_update.email  # type: ignore
+    # Validation is performed in route operation
+    db_user.username = user_data_update.username.lower()  # type: ignore
+    db_user.email = user_data_update.email.lower()  # type: ignore
 
     db.commit()
     db.refresh(db_user)
@@ -74,18 +66,15 @@ def update_account_password(
 ) -> models.User | None:
     db_user = get_user_by_id(db, user_id=current_user_id)
 
-    if db_user is None:
-        return None
-
     # The hashed password in the db and the input one must match
     if not auth.verify_password(
         password_schema.current_password, db_user.hashed_password
     ):
         return None
 
-    if password_schema.new_password:  # TODO: add more verifications to the password
+    if password_schema.new_password:
         db_user.hashed_password = auth.get_password_hash(password_schema.new_password)  # type: ignore
-    # Comprobar si misma pw, etc. Mirar si fastapi tiene algo!! Automatic logout #TODOs
+
     db.commit()
     db.refresh(db_user)
 

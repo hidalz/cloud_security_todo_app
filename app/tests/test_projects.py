@@ -1,7 +1,6 @@
-import pytest
 from tests.utils import mock_test_data, perform_assertions
 
-from app.tests.utils import PROJECTS_URL, USERS
+from app.tests.utils import PROJECTS_URL
 
 
 def test_get_owned_and_collaborated_projects_empty(client, auth_token):

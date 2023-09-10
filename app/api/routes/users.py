@@ -1,17 +1,12 @@
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
+from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
 import app.db.database as db
-import app.models.users as user_model
-import app.schemas.projects as project_schema
-import app.schemas.tasks as task_schema
 import app.schemas.users as user_schema
-import app.services.projects as project_crud
-import app.services.tasks as task_crud
 import app.services.users as user_crud
 from app.services.auth import get_current_active_user
-from app.services.validators import check_valid_user_id, validate_user
+from app.services.validators import validate_user
 
 router = APIRouter(tags=["Users"], prefix="/users")
 

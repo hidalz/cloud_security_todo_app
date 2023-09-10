@@ -1,4 +1,3 @@
-import pytest
 from tests.utils import USERS, USERS_URL, mock_test_data
 
 

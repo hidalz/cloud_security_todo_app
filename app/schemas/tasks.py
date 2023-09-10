@@ -1,7 +1,6 @@
 # https://docs.pydantic.dev/latest/usage/postponed_annotations/
 from __future__ import annotations
 
-from datetime import datetime
 
 from pydantic import BaseModel
 

@@ -1,6 +1,5 @@
 from pydantic import BaseModel, EmailStr
 
-from app import schemas
 from app.schemas.projects import Project
 from app.schemas.tasks import Task
 

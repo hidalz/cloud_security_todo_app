@@ -4,7 +4,6 @@ from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 import app.db.database as db
 import app.schemas.users as user_schema
-import app.services.projects as project_crud
 import app.services.tasks as crud
 from app.models.tasks import Task as task_model
 from app.schemas.tasks import Task, TaskCreateModify

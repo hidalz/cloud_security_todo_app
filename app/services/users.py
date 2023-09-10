@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 import app.models.users as models
 import app.schemas.users as schemas
 import app.services.auth as auth
-from app.services.validators import validate_user
 
 
 def create_user(db: Session, user: schemas.UserInDB) -> models.User:

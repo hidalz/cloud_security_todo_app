@@ -1,12 +1,11 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 import app.db.database as db
-from app.models.users import User
 from app.schemas.auth import Token
 from app.services.auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,

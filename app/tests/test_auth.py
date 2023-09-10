@@ -5,7 +5,6 @@ from app.tests.utils import (
     PROJECTS_URL,
     TASKS_URL,
     USERS,
-    USERS_URL,
     get_auth_token_second_user,
     mock_test_data,
 )

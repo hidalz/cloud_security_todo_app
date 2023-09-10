@@ -3,8 +3,6 @@ from sqlalchemy.orm import Session
 import app.models.tasks as models
 import app.schemas.tasks as schemas
 
-# TODO: Refactor!!! Para que dentro no haya el doble de metodos, interfaz?
-
 
 def get_all_own_tasks(
     db: Session, owner_id: int, skip: int = 0, limit: int = 100
@@ -15,6 +13,9 @@ def get_all_own_tasks(
         .filter(
             models.Task.parent_id == None
         )  # Avoid repetition of subtasks showing up as tasks, as they are already nested Pydantic models
+        .filter(
+            models.Task.project_id == None
+        )  # Avoid repetition of tasks in projects and user
         .offset(skip)
         .limit(limit)
         .all()
@@ -22,13 +23,17 @@ def get_all_own_tasks(
 
 
 def get_task(db: Session, owner_id: int, task_id: int) -> models.Task:
-    """Get task by id and owner_id.
+    """Get task by  task_id and owner_id.
+
+    It checks that the task exists and that the owner_id is the same as the one provided.
 
     If the task is a subtask, it will be retrieved as well. All the nested subtasks will be
-    retrieved."""
+    retrieved.
+    """
+
     return (
         db.query(models.Task)
-        .filter(models.Task.owner_id == owner_id)
+        .filter(models.Task.owner_id == owner_id)  # type: ignore
         .filter(models.Task.id == task_id)
         .first()
     )
@@ -39,11 +44,10 @@ def create_task(
     task: schemas.TaskCreateModify,
     user_id: int,
 ) -> models.Task:
-    # TODO: Review that the user is the owner or collaborator of project. And the same for parent task. Extra function
     db_task = models.Task(
         **task.model_dump(),
         owner_id=user_id,
-    )
+    )  # type: ignore
 
     db.add(db_task)
     db.commit()
@@ -53,11 +57,9 @@ def create_task(
 
 
 def update_task(
-    db: Session, owner_id: int, task: schemas.TaskCreateModify
+    db: Session, owner_id: int, task: schemas.TaskCreateModify, task_id: int
 ) -> models.Task:
-    # TODO: Check clean or coupling
-    # TODO: Add comprobation that the user is the owner of the task and project collaborator, extra function. Make PATCHs
-    db_task = get_task(db, owner_id=owner_id, task_id=task.id)
+    db_task = get_task(db, owner_id=owner_id, task_id=task_id)  # type: ignore
 
     db_task.title = task.title  # type: ignore
     db_task.description = task.description  # type: ignore

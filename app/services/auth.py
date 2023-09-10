@@ -11,8 +11,6 @@ import app.db.database as db
 from app.models.users import User
 from app.schemas.auth import TokenData
 
-# TODO: Refactor of module (docker)
-
 ########### HASHING ###########
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -71,11 +69,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 #### AUTH SERVICE ###########
 
-# TODO: Como hacer esto mas robusto
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
 
-# TODO: Ver si esto hace falta aqui o puedo usar el de users. Coupling y como reducirlo.
+# TODO: Possibly reduce coupling
 def get_user(username: str, db: Session = Depends(db.get_db)):
     user = db.query(User).filter(User.username == username).first()
     if user:
@@ -84,6 +81,7 @@ def get_user(username: str, db: Session = Depends(db.get_db)):
 
 def authenticate_user(username: str, password: str, db: Session = Depends(db.get_db)):
     user = get_user(username, db)
+
     if not user:
         return False
     if not verify_password(password, user.hashed_password):

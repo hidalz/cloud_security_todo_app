@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "api-gateway-chart.fullname" . }}
+spec:
+  replicas: {{ .Values.api_gateway_service.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "api-gateway-chart.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "api-gateway-chart.fullname" . }}
+    spec:
+      containers:
+        - name: api-gateway-service
+          image: {{ .Values.api_gateway_service.image.repository }}:{{ .Values.api_gateway_service.image.tag }}
+          ports:
+            - containerPort: {{ .Values.api_gateway_service.service.port }}

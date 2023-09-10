@@ -1,0 +1,8 @@
+api_gateway_service:
+  replicaCount: 1
+  image:
+    repository: localhost:5000/api_gateway_service
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 8000

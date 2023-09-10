@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tasks-service-chart.fullname" . }}
+spec:
+  replicas: {{ .Values.tasks_service.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "tasks-service-chart.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "tasks-service-chart.fullname" . }}
+    spec:
+      containers:
+        - name: tasks-service
+          image: {{ .Values.tasks_service.image.repository }}:{{ .Values.tasks_service.image.tag }}
+          ports:
+            - containerPort: {{ .Values.tasks_service.service.port }}

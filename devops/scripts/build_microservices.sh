@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run in root folder > ./devops/build_microservices.sh
+# 1 - Run in root folder > ./devops/scripts/build_microservices.sh
 
 # List of your microservices directories
 microservices=("auth_service" "api_gateway_service" "users_service" "tasks_service" "projects_service")

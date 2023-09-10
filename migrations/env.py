@@ -3,11 +3,12 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from app import settings
-from app.db.database import Base
-from app.models.projects import Project
-from app.models.tasks import Task
-from app.models.users import User
+# Need to import all models here to ensure they are available for Alembic to detect.
+from common_components.database import settings
+from common_components.database.db import Base
+from projects_service import projects_models as project_models
+from tasks_service import tasks_models as task_models
+from users_service import users_models as user_models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

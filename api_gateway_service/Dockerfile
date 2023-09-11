@@ -14,4 +14,4 @@ COPY api_gateway_service /code/api_gateway_service
 COPY common_components /code/common_components
 
 # Run main.py when the container launches
-CMD ["uvicorn", "api_gateway:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api_gateway:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]

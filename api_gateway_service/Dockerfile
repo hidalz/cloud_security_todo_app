@@ -2,22 +2,16 @@
 # Use an official Python runtime as a parent image
 FROM python:3.10-slim
 
-# Set the working directory to /api_gateway_service
-WORKDIR /app
+WORKDIR /code
 
-# Copy the current directory contents into the container at /api_gateway_service
-COPY api_gateway_service /app/api_gateway_service
-COPY common_components /app/common_components
-COPY requirements.txt /app
+COPY requirements.txt /code
 
 # Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-# Make port 8000 available to the world outside this container
-EXPOSE 8000
-
-# Define environment variable
-ENV NAME api_gateway_service
+# Copy the current directory contents into the container at /api_gateway_service
+COPY api_gateway_service /code/api_gateway_service
+COPY common_components /code/common_components
 
 # Run main.py when the container launches
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api_gateway:app", "--host", "0.0.0.0", "--port", "8000"]

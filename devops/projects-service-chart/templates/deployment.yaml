@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "projects-service-chart.fullname" . }}
+spec:
+  replicas: {{ .Values.projects_service.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "projects-service-chart.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "projects-service-chart.fullname" . }}
+    spec:
+      containers:
+        - name: projects-service
+          image: {{ .Values.projects_service.image.repository }}:{{ .Values.projects_service.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.projects_service.service.port }}

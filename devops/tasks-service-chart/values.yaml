@@ -1,0 +1,12 @@
+tasks_service:
+  replicaCount: 1
+  image:
+    repository: localhost:5000/tasks_service
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8003
+  env:
+    - name: TASKS_SERVICE_URL
+      value: "http://tasks-service:8003/tasks"

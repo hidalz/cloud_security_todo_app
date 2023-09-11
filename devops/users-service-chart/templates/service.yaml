@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "users-service-chart.fullname" . }}
+spec:
+  selector:
+    app: {{ include "users-service-chart.fullname" . }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.users_service.service.port }}
+  type: {{ .Values.users_service.service.type }}

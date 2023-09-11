@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tasks-service-chart.fullname" . }}
+spec:
+  selector:
+    app: {{ include "tasks-service-chart.fullname" . }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.tasks_service.service.port }}
+  type: {{ .Values.tasks_service.service.type }}

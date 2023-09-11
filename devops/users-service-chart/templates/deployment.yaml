@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "users-service-chart.fullname" . }}
+spec:
+  replicas: {{ .Values.users_service.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "users-service-chart.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "users-service-chart.fullname" . }}
+    spec:
+      containers:
+        - name: users-service
+          image: {{ .Values.users_service.image.repository }}:{{ .Values.users_service.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.users_service.service.port }}

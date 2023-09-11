@@ -15,5 +15,6 @@ spec:
       containers:
         - name: projects-service
           image: {{ .Values.projects_service.image.repository }}:{{ .Values.projects_service.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.projects_service.service.port }}

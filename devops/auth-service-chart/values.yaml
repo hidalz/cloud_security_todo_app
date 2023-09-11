@@ -3,6 +3,10 @@ auth_service:
   image:
     repository: localhost:5000/auth_service
     tag: latest
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 8001
+  env:
+    - name: AUTH_SERVICE_URL
+      value: "http://users-service:8001/auth"

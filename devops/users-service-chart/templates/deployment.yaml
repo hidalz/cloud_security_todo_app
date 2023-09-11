@@ -15,5 +15,6 @@ spec:
       containers:
         - name: users-service
           image: {{ .Values.users_service.image.repository }}:{{ .Values.users_service.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.users_service.service.port }}
